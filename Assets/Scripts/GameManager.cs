@@ -98,6 +98,8 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.Level1:
                 SceneManager.LoadScene("GameScene");
+
+                StartCoroutine(SpawnItems());
                 break;
             default:
                 break;
@@ -106,7 +108,6 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Audio
-    
     private AudioClip HoverClip;
     private AudioSource audioSourcer;
     public AudioSource AudioSourcer 
@@ -132,6 +133,26 @@ public class GameManager : MonoBehaviour
     {
         AudioSourcer = gameObject.AddComponent<AudioSource>();
         HoverClip = Resources.Load("Click") as AudioClip;
+
+        UpdateGameState(GameState.Level1);
+    }
+    #endregion
+
+    #region Items
+    private IEnumerator SpawnItems()
+    {
+        List<UnityEngine.Object> items = Resources.LoadAll("ItemPics", typeof(Texture)).ToList();
+        GameObject spawnPoint = GameObject.Find("SpawnPoint");
+        for (int i = 0; i < 10; i++)
+        {
+            GameObject NewObj = new GameObject(); //Create the GameObject
+            Image NewImage = NewObj.AddComponent<Image>(); //Add the Image Component script
+            NewImage.sprite = currentSprite; //Set the Sprite of the Image Component on the new GameObject
+            NewObj.GetComponent<RectTransform>().SetParent(ParentPanel.transform); //Assign the newly created Image GameObject as a Child of the Parent Panel.
+            NewObj.SetActive(true); //Activate the GameObject
+            Instantiate(GreenEnemy, spawnPoint.transform, Quaternion.identity);
+        }
+        yield return null;
     }
     #endregion
 }
