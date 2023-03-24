@@ -1,7 +1,7 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using System.Linq;
@@ -134,6 +134,7 @@ public class GameManager : MonoBehaviour
         AudioSourcer = gameObject.AddComponent<AudioSource>();
         HoverClip = Resources.Load("Click") as AudioClip;
 
+        // Remove this before deploying (hack to develop using game scene)
         UpdateGameState(GameState.Level1);
     }
     #endregion
@@ -142,15 +143,16 @@ public class GameManager : MonoBehaviour
     private IEnumerator SpawnItems()
     {
         List<UnityEngine.Object> items = Resources.LoadAll("ItemPics", typeof(Texture)).ToList();
-        GameObject spawnPoint = GameObject.Find("SpawnPoint");
-        for (int i = 0; i < 10; i++)
+        var spawnPoint = new Vector2(-13, 0);
+        for (int i = 0; i < 1; i++)
         {
-            GameObject NewObj = new GameObject(); //Create the GameObject
-            Image NewImage = NewObj.AddComponent<Image>(); //Add the Image Component script
-            NewImage.sprite = currentSprite; //Set the Sprite of the Image Component on the new GameObject
-            NewObj.GetComponent<RectTransform>().SetParent(ParentPanel.transform); //Assign the newly created Image GameObject as a Child of the Parent Panel.
-            NewObj.SetActive(true); //Activate the GameObject
-            Instantiate(GreenEnemy, spawnPoint.transform, Quaternion.identity);
+            GameObject newItem = new GameObject(); //Create the GameObject
+            Image newImage = newItem.AddComponent<Image>(); //Add the Image Component script
+            Sprite newSprite = items[Random.Range(0, items.Count)] as Sprite;
+            newImage.sprite = newSprite; //Set the Sprite of the Image Component on the new GameObject
+            // newItem.GetComponent<RectTransform>().SetParent(ParentPanel.transform); //Assign the newly created Image GameObject as a Child of the Parent Panel.
+            newItem.SetActive(true); //Activate the GameObject
+            Instantiate(newItem, spawnPoint, Quaternion.identity);
         }
         yield return null;
     }
