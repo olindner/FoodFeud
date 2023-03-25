@@ -5,9 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Unity Editor",
+            "name": "Unity Editor Windows",
             "type": "unity",
             "path": "/d:/Unity/FoodFeud/Library/EditorInstance.json",
+            "request": "launch"
+        },
+        {
+            "name": "Unity Editor Mac",
+            "type": "unity",
+            "path": "/Users/orilindner/Unity/FoodFeud/Library/EditorInstance.json",
             "request": "launch"
         },
         {
