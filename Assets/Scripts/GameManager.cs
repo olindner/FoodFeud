@@ -143,16 +143,18 @@ public class GameManager : MonoBehaviour
     private IEnumerator SpawnItems()
     {
         List<UnityEngine.Object> items = Resources.LoadAll("ItemPics", typeof(Texture)).ToList();
+        GameObject itemPrefab = Resources.Load("ItemPrefab") as GameObject;
         var spawnPoint = new Vector2(-13, 0);
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 10; i++)
         {
-            GameObject newItem = new GameObject(); //Create the GameObject
-            Image newImage = newItem.AddComponent<Image>(); //Add the Image Component script
-            Sprite newSprite = items[Random.Range(0, items.Count)] as Sprite;
-            newImage.sprite = newSprite; //Set the Sprite of the Image Component on the new GameObject
-            // newItem.GetComponent<RectTransform>().SetParent(ParentPanel.transform); //Assign the newly created Image GameObject as a Child of the Parent Panel.
-            newItem.SetActive(true); //Activate the GameObject
-            Instantiate(newItem, spawnPoint, Quaternion.identity);
+            var index = Random.Range(0, items.Count);
+            var newTexture = items[index] as Texture2D;
+            var newSprite = Sprite.Create(newTexture, new Rect(0, 0, newTexture.width, newTexture.height), Vector2.zero);
+            itemPrefab.GetComponent<SpriteRenderer>().sprite = newSprite as Sprite;
+
+            // newItem.SetActive(true);
+            Instantiate(itemPrefab, spawnPoint, Quaternion.identity);
+            yield return new WaitForSeconds(1);
         }
         yield return null;
     }
