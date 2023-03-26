@@ -58,7 +58,7 @@ public class GameManager : MonoBehaviour
     #region Buttons
     public void StartGame()
     {
-        UpdateGameState(GameState.Level1);
+        UpdateGameState(GameState.LoadGame);
     }
 
     public void QuitGame()
@@ -72,6 +72,7 @@ public class GameManager : MonoBehaviour
     public enum GameState
     {
         Menu,
+        LoadGame,
         Level1
     }
 
@@ -87,6 +88,7 @@ public class GameManager : MonoBehaviour
             state = value;
         }
     }
+    AsyncOperation asyncLoadLevel;
 
     public void UpdateGameState(GameState newState)
     {
@@ -96,14 +98,25 @@ public class GameManager : MonoBehaviour
         {
             case GameState.Menu:
                 break;
+            case GameState.LoadGame:
+                asyncLoadLevel = SceneManager.LoadSceneAsync("GameScene", LoadSceneMode.Single);
+                StartCoroutine(WaitForSceneToLoad());
+                break;
             case GameState.Level1:
-                SceneManager.LoadScene("GameScene");
-
                 StartCoroutine(SpawnItems());
                 break;
             default:
                 break;
         }
+    }
+
+    private IEnumerator WaitForSceneToLoad()
+    {
+        while (!asyncLoadLevel.isDone){
+            yield return null;
+        }
+
+        UpdateGameState(GameState.Level1);
     }
     #endregion
 
@@ -135,7 +148,7 @@ public class GameManager : MonoBehaviour
         HoverClip = Resources.Load("Click") as AudioClip;
 
         // Remove this before deploying (hack to develop using game scene)
-        UpdateGameState(GameState.Level1);
+        // UpdateGameState(GameState.Level1);
     }
     #endregion
 
@@ -144,8 +157,8 @@ public class GameManager : MonoBehaviour
     {
         List<UnityEngine.Object> items = Resources.LoadAll("ItemPics", typeof(Texture)).ToList();
         GameObject itemPrefab = Resources.Load("ItemPrefab") as GameObject;
-        var spawnPoint = new Vector2(-13, 0);
-        for (int i = 0; i < 10; i++)
+        var spawnPoint = new Vector2(-13, -4);
+        for (int i = 0; i < 100; i++)
         {
             var index = Random.Range(0, items.Count);
             var newTexture = items[index] as Texture2D;
