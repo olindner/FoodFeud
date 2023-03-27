@@ -148,7 +148,7 @@ public class GameManager : MonoBehaviour
         HoverClip = Resources.Load("Click") as AudioClip;
 
         // Remove this before deploying (hack to develop using game scene)
-        // UpdateGameState(GameState.Level1);
+        UpdateGameState(GameState.Level1);
     }
     #endregion
 
@@ -157,7 +157,6 @@ public class GameManager : MonoBehaviour
     {
         List<UnityEngine.Object> items = Resources.LoadAll("ItemPics", typeof(Texture)).ToList();
         GameObject itemPrefab = Resources.Load("ItemPrefab") as GameObject;
-        var spawnPoint = new Vector2(-13, -4);
         for (int i = 0; i < 100; i++)
         {
             var index = Random.Range(0, items.Count);
@@ -165,9 +164,8 @@ public class GameManager : MonoBehaviour
             var newSprite = Sprite.Create(newTexture, new Rect(0, 0, newTexture.width, newTexture.height), Vector2.zero);
             itemPrefab.GetComponent<SpriteRenderer>().sprite = newSprite as Sprite;
 
-            // newItem.SetActive(true);
-            Instantiate(itemPrefab, spawnPoint, Quaternion.identity);
-            yield return new WaitForSeconds(1);
+            Instantiate(itemPrefab);
+            yield return new WaitForSeconds(2f);
         }
         yield return null;
     }

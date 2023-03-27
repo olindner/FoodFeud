@@ -4,10 +4,14 @@ using UnityEngine;
 
 public class Item : MonoBehaviour
 {
-    public float speed = 0.5f;
+    public float speed = 2.5f;
+    public bool moving = true;
 
     void Update()
     {
-        transform.position = new Vector2(transform.position.x + (speed * Time.deltaTime), transform.position.y);
+        if (moving)
+        {
+            transform.position = new Vector2(transform.position.x + (speed * Time.deltaTime), transform.position.y);
+        }
     }
 }
