@@ -7,13 +7,11 @@ public class CanvasManager : MonoBehaviour
 {
     #region Singleton and Basic Func
     public static CanvasManager Instance;
-    private float maxFood = 100;
-    private float maxHealth = 100;
+
+    private GameObject Face0;
+    private GameObject Face1;
+    private GameObject Face2;
     
-    private float currentFood = 50f;
-    private float currentHealth = 100f;
-
-
     void Awake()
     {
         Instance = this;
@@ -25,31 +23,50 @@ public class CanvasManager : MonoBehaviour
 
     public void Initialize()
     {
-        FoodBar = GameObject.Find("FoodBarInsides");
-        FoodText = GameObject.Find("FoodBarText");
-        UpdateFoodBar();
+        Face0 = GameObject.Find("Face0");
+        UpdateBars(0);
     }
 
     void OnDestroy()
     {
-        GameManager.Instance.FoodEatenAction -= FoodEaten;
+        if (GameManager.Instance)
+        {
+            GameManager.Instance.FoodEatenAction -= FoodEaten;
+        }
     }
     #endregion
 
-    private void FoodEaten(int amount)
+    private void FoodEaten(GameObject face)
     {
-        currentFood = (int)Mathf.Min(currentFood + amount, maxFood);
-        UpdateFoodBar();
+        // Display visual change
+        UpdateBars(face.GetComponent<Face>().index);
     }
 
-    private GameObject FoodBar;
-    private GameObject FoodText;
-    private GameObject HealthBar;
-
-    private void UpdateFoodBar()
+    public void UpdateBars(int index)
 	{
-		float ratio = currentFood / maxFood;
-		FoodBar.GetComponent<RectTransform>().localPosition = new Vector3(FoodBar.GetComponent<RectTransform>().rect.width * ratio - FoodBar.GetComponent<RectTransform>().rect.width, 0, 0);
-		FoodText.GetComponent<Text>().text = currentFood.ToString ("0") + "/" + maxFood.ToString ("0");
+        GameObject face = IndexToFace(index);
+        GameObject foodBar = face.GetComponent<Face>().foodBar;
+        GameObject healthBar = face.GetComponent<Face>().healthBar;
+
+		float foodRatio = face.GetComponent<Face>().currentFood / face.GetComponent<Face>().maxFood;
+		float healthRatio = face.GetComponent<Face>().currentHealth / face.GetComponent<Face>().maxHealth;
+
+		foodBar.GetComponent<RectTransform>().localPosition = new Vector3(foodBar.GetComponent<RectTransform>().rect.width * foodRatio - foodBar.GetComponent<RectTransform>().rect.width, 0, 0);
+		healthBar.GetComponent<RectTransform>().localPosition = new Vector3(healthBar.GetComponent<RectTransform>().rect.width * healthRatio - healthBar.GetComponent<RectTransform>().rect.width, 0, 0);
 	}
+
+    private GameObject IndexToFace(int index)
+    {
+        switch (index)
+        {
+            case 0:
+                return Face0;
+            case 1:
+                return Face1;
+            case 2:
+                return Face2;
+            default:
+                return null;
+        }
+    }
 }

@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Observables
-    public event Action<int> FoodEatenAction;
+    public event Action<GameObject> FoodEatenAction;
     #endregion
 
     #region Buttons
@@ -75,7 +75,9 @@ public class GameManager : MonoBehaviour
         Menu,
         LoadGame,
         InitGameObjs,
-        Level1
+        Level1,
+        Level2,
+        Level3
     }
 
     private GameState state;
@@ -111,6 +113,12 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.Level1:
                 StartCoroutine(SpawnItems());
+                break;
+            case GameState.Level2:
+                // Make sure to init Canvas Manager Face 1
+                break;
+            case GameState.Level3:
+                // Make sure to init Canvas Manager Face 2
                 break;
             default:
                 break;
@@ -177,9 +185,10 @@ public class GameManager : MonoBehaviour
         yield return null;
     }
 
-    public void FoodEaten()
+    public void FoodEaten(GameObject face, GameObject item)
     {
-        FoodEatenAction?.Invoke(10);
+        // Eventually add to points based on item's value
+        FoodEatenAction?.Invoke(face);
     }
     #endregion
 }
