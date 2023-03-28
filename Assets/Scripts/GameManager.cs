@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -52,7 +53,7 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Observables
-    
+    public event Action<int> FoodEatenAction;
     #endregion
 
     #region Buttons
@@ -73,6 +74,7 @@ public class GameManager : MonoBehaviour
     {
         Menu,
         LoadGame,
+        InitGameObjs,
         Level1
     }
 
@@ -102,6 +104,11 @@ public class GameManager : MonoBehaviour
                 asyncLoadLevel = SceneManager.LoadSceneAsync("GameScene", LoadSceneMode.Single);
                 StartCoroutine(WaitForSceneToLoad());
                 break;
+            case GameState.InitGameObjs:
+                // Get obj references here!
+                CanvasManager.Instance.Initialize();
+                UpdateGameState(GameState.Level1);
+                break;
             case GameState.Level1:
                 StartCoroutine(SpawnItems());
                 break;
@@ -116,7 +123,7 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
 
-        UpdateGameState(GameState.Level1);
+        UpdateGameState(GameState.InitGameObjs);
     }
     #endregion
 
@@ -148,7 +155,7 @@ public class GameManager : MonoBehaviour
         HoverClip = Resources.Load("Click") as AudioClip;
 
         // Remove this before deploying (hack to develop using game scene)
-        UpdateGameState(GameState.Level1);
+        UpdateGameState(GameState.InitGameObjs);
     }
     #endregion
 
@@ -159,7 +166,7 @@ public class GameManager : MonoBehaviour
         GameObject itemPrefab = Resources.Load("ItemPrefab") as GameObject;
         for (int i = 0; i < 100; i++)
         {
-            var index = Random.Range(0, items.Count);
+            var index = UnityEngine.Random.Range(0, items.Count);
             var newTexture = items[index] as Texture2D;
             var newSprite = Sprite.Create(newTexture, new Rect(0, 0, newTexture.width, newTexture.height), Vector2.zero);
             itemPrefab.GetComponent<SpriteRenderer>().sprite = newSprite as Sprite;
@@ -168,6 +175,11 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(2f);
         }
         yield return null;
+    }
+
+    public void FoodEaten()
+    {
+        FoodEatenAction?.Invoke(10);
     }
     #endregion
 }

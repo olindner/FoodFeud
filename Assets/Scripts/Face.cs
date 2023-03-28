@@ -9,6 +9,7 @@ public class Face : MonoBehaviour
         if (col.gameObject.tag == "Item")
         {
             Destroy(col.gameObject);
+            GameManager.Instance.FoodEaten();
         }
     }
 }
