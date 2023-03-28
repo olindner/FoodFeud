@@ -15,6 +15,7 @@ public class Face : MonoBehaviour
     private float foodRefillValue = 20f;
     private float hungerTickInSeconds = 5f;
     private float hungerTickValue = 10f;
+    private float unhealthyPenalty = 10f;
 
     void Start()
     {
@@ -29,8 +30,11 @@ public class Face : MonoBehaviour
         {
             Destroy(col.gameObject);
             currentFood = Mathf.Min(currentFood + foodRefillValue, maxFood);
-            GameManager.Instance.FoodEaten(this.gameObject, col.gameObject);
-            CanvasManager.Instance.UpdateBars(index);
+            if (!col.gameObject.GetComponent<Item>().healthy)
+            {
+                currentHealth = Mathf.Max(0, currentHealth - unhealthyPenalty);
+            }
+            GameManager.Instance.FoodEaten(col.gameObject, index);
         }
     }
 

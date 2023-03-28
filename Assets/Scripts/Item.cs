@@ -5,6 +5,7 @@ using UnityEngine;
 public class Item : MonoBehaviour
 {
     public float speed = 2.5f;
+    public bool healthy = true;
     public bool moving = true;
 
     void Update()

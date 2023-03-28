@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Observables
-    public event Action<GameObject> FoodEatenAction;
+    public event Action<int> FoodEatenAction;
     #endregion
 
     #region Buttons
@@ -170,25 +170,40 @@ public class GameManager : MonoBehaviour
     #region Items
     private IEnumerator SpawnItems()
     {
-        List<UnityEngine.Object> items = Resources.LoadAll("ItemPics", typeof(Texture)).ToList();
-        GameObject itemPrefab = Resources.Load("ItemPrefab") as GameObject;
+        List<UnityEngine.Object> healthyItems = Resources.LoadAll("HealthyPics", typeof(Texture)).ToList();
+        List<UnityEngine.Object> unhealthyItems = Resources.LoadAll("UnhealthyPics", typeof(Texture)).ToList();
+        GameObject itemPrefab;
         for (int i = 0; i < 100; i++)
         {
-            var index = UnityEngine.Random.Range(0, items.Count);
-            var newTexture = items[index] as Texture2D;
+            var healthiness = UnityEngine.Random.Range(0, 4); // 1:4 getting unhealthy/healthy
+            itemPrefab = healthiness < 3 ? Resources.Load("HealthyItemPrefab") as GameObject : Resources.Load("UnhealthyItemPrefab") as GameObject;
+            var foodIndex = healthiness < 3 ? UnityEngine.Random.Range(0, healthyItems.Count) : UnityEngine.Random.Range(0, unhealthyItems.Count);
+            var newTexture = healthiness < 3 ? healthyItems[foodIndex] as Texture2D : unhealthyItems[foodIndex] as Texture2D;
             var newSprite = Sprite.Create(newTexture, new Rect(0, 0, newTexture.width, newTexture.height), Vector2.zero);
             itemPrefab.GetComponent<SpriteRenderer>().sprite = newSprite as Sprite;
 
             Instantiate(itemPrefab);
+
+            if (healthiness == 3){
+                itemPrefab.GetComponent<Item>().healthy = false;
+            }
             yield return new WaitForSeconds(2f);
         }
         yield return null;
     }
 
-    public void FoodEaten(GameObject face, GameObject item)
+    public void FoodEaten(GameObject item, int index)
     {
         // Eventually add to points based on item's value
-        FoodEatenAction?.Invoke(face);
+        FoodEatenAction?.Invoke(index);
+        if (item.GetComponent<Item>().healthy)
+        {
+            // Debug.Log("Healthy!");
+        }
+        else
+        {
+            // Debug.Log("Unhealthy!");
+        }
     }
     #endregion
 }

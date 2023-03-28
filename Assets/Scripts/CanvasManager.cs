@@ -36,10 +36,10 @@ public class CanvasManager : MonoBehaviour
     }
     #endregion
 
-    private void FoodEaten(GameObject face)
+    private void FoodEaten(int index)
     {
         // Display visual change
-        UpdateBars(face.GetComponent<Face>().index);
+        UpdateBars(index);
     }
 
     public void UpdateBars(int index)
