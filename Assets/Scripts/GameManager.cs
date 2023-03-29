@@ -181,12 +181,13 @@ public class GameManager : MonoBehaviour
             var newTexture = healthiness < 3 ? healthyItems[foodIndex] as Texture2D : unhealthyItems[foodIndex] as Texture2D;
             var newSprite = Sprite.Create(newTexture, new Rect(0, 0, newTexture.width, newTexture.height), Vector2.zero);
             itemPrefab.GetComponent<SpriteRenderer>().sprite = newSprite as Sprite;
+            if (healthiness == 3)
+            {
+                itemPrefab.GetComponent<Item>().healthy = false;
+            }
 
             Instantiate(itemPrefab);
 
-            if (healthiness == 3){
-                itemPrefab.GetComponent<Item>().healthy = false;
-            }
             yield return new WaitForSeconds(2f);
         }
         yield return null;
