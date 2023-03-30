@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Type = Item.Type;
 using UnityEngine;
 
 public class Face : MonoBehaviour
@@ -16,6 +17,7 @@ public class Face : MonoBehaviour
 
     private ParticleSystem particleSystem;
     private float foodRefillValue = 10f;
+    private float healthRefillValue = 50f;
     private float hungerTickInSeconds = 1f;
     private float hungerTickValue = 2f;
     private float unhealthyPenalty = 15f;
@@ -35,20 +37,27 @@ public class Face : MonoBehaviour
         {
             Destroy(col.gameObject);
 
-            if (col.gameObject.GetComponent<Item>().healthy)
+            switch (col.gameObject.GetComponent<Item>().type)
             {
-                currentFood = Mathf.Min(currentFood + foodRefillValue, maxFood);
-                StartCoroutine(StarBurst());
-            }
-            else
-            {
-                // Eating unhealthy food replenishes hunger, but only at half effectiveness!
-                currentFood = Mathf.Min(currentFood + foodRefillValue/2, maxFood);
-                currentHealth = Mathf.Max(0, currentHealth - unhealthyPenalty);
-                StartCoroutine(TintGreen(gameObject.GetComponent<SpriteRenderer>()));
+                case Type.Healthy:
+                    currentFood = Mathf.Min(currentFood + foodRefillValue, maxFood);
+                    StartCoroutine(StarBurst());
+                    break;
+                case Type.Unhealthy:
+                    // Eating unhealthy food replenishes hunger, but only at half effectiveness!
+                    currentFood = Mathf.Min(currentFood + foodRefillValue/2, maxFood);
+                    currentHealth = Mathf.Max(0, currentHealth - unhealthyPenalty);
+                    StartCoroutine(TintGreen(gameObject.GetComponent<SpriteRenderer>()));
+                    break;
+                case Type.HealthPack:
+                    currentHealth = Mathf.Min(currentHealth + healthRefillValue, maxHealth);
+                    StartCoroutine(StarBurst());
+                    break;
+                default:
+                    break;
             }
 
-            GameManager.Instance.FoodEaten(col.gameObject, index);
+            GameManager.Instance.ItemConsumed(col.gameObject, index);
         }
     }
 

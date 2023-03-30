@@ -16,7 +16,7 @@ public class CanvasManager : MonoBehaviour
     {
         Instance = this;
 
-        GameManager.Instance.FoodEatenAction += FoodEaten;
+        GameManager.Instance.ItemConsumedAction += ItemConsumed;
 
         DontDestroyOnLoad(this);
     }
@@ -31,12 +31,12 @@ public class CanvasManager : MonoBehaviour
     {
         if (GameManager.Instance)
         {
-            GameManager.Instance.FoodEatenAction -= FoodEaten;
+            GameManager.Instance.ItemConsumedAction -= ItemConsumed;
         }
     }
     #endregion
 
-    private void FoodEaten(int index)
+    private void ItemConsumed(int index)
     {
         // Display visual change
         UpdateBars(index);

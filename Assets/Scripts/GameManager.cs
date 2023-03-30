@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Observables
-    public event Action<int> FoodEatenAction;
+    public event Action<int> ItemConsumedAction;
     #endregion
 
     #region Buttons
@@ -173,14 +173,31 @@ public class GameManager : MonoBehaviour
         List<UnityEngine.Object> healthyItems = Resources.LoadAll("HealthyPics", typeof(Texture)).ToList();
         List<UnityEngine.Object> unhealthyItems = Resources.LoadAll("UnhealthyPics", typeof(Texture)).ToList();
         GameObject itemPrefab;
+
         for (int i = 0; i < 100; i++)
         {
-            var healthiness = UnityEngine.Random.Range(0, 100);
-            itemPrefab = healthiness < 50 ? Resources.Load("HealthyItemPrefab") as GameObject : Resources.Load("UnhealthyItemPrefab") as GameObject;
-            var foodIndex = healthiness < 50 ? UnityEngine.Random.Range(0, healthyItems.Count) : UnityEngine.Random.Range(0, unhealthyItems.Count);
-            var newTexture = healthiness < 50 ? healthyItems[foodIndex] as Texture2D : unhealthyItems[foodIndex] as Texture2D;
-            var newSprite = Sprite.Create(newTexture, new Rect(0, 0, newTexture.width, newTexture.height), Vector2.zero);
-            itemPrefab.GetComponent<SpriteRenderer>().sprite = newSprite as Sprite;
+            var randomSelector = UnityEngine.Random.Range(0, 100);
+
+            if (randomSelector < 45)
+            {
+                itemPrefab = Resources.Load("HealthyItemPrefab") as GameObject;
+                var foodIndex = UnityEngine.Random.Range(0, healthyItems.Count);
+                var newTexture = healthyItems[foodIndex] as Texture2D;
+                var newSprite = Sprite.Create(newTexture, new Rect(0, 0, newTexture.width, newTexture.height), Vector2.zero);
+                itemPrefab.GetComponent<SpriteRenderer>().sprite = newSprite as Sprite;
+            }
+            else if (randomSelector < 90)
+            {
+                itemPrefab = Resources.Load("UnhealthyItemPrefab") as GameObject;
+                var foodIndex = UnityEngine.Random.Range(0, unhealthyItems.Count);
+                var newTexture = unhealthyItems[foodIndex] as Texture2D;
+                var newSprite = Sprite.Create(newTexture, new Rect(0, 0, newTexture.width, newTexture.height), Vector2.zero);
+                itemPrefab.GetComponent<SpriteRenderer>().sprite = newSprite as Sprite;
+            }
+            else
+            {
+                itemPrefab = Resources.Load("HealthPackItemPrefab") as GameObject;
+            }
 
             Instantiate(itemPrefab);
 
@@ -189,18 +206,10 @@ public class GameManager : MonoBehaviour
         yield return null;
     }
 
-    public void FoodEaten(GameObject item, int index)
+    public void ItemConsumed(GameObject item, int index)
     {
         // Eventually add to points based on item's value
-        FoodEatenAction?.Invoke(index);
-        if (item.GetComponent<Item>().healthy)
-        {
-            // Debug.Log("Healthy!");
-        }
-        else
-        {
-            // Debug.Log("Unhealthy!");
-        }
+        ItemConsumedAction?.Invoke(index);
     }
     #endregion
 }

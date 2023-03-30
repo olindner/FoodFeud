@@ -5,7 +5,13 @@ using UnityEngine;
 public class Item : MonoBehaviour
 {
     public float speed = 2.5f;
-    public bool healthy = true;
+    public enum Type
+    {
+        Healthy,
+        Unhealthy,
+        HealthPack
+    }
+    public Type type;
     public bool moving = true;
 
     void Update()
