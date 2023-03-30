@@ -175,16 +175,12 @@ public class GameManager : MonoBehaviour
         GameObject itemPrefab;
         for (int i = 0; i < 100; i++)
         {
-            var healthiness = UnityEngine.Random.Range(0, 4); // 1:4 getting unhealthy/healthy
-            itemPrefab = healthiness < 3 ? Resources.Load("HealthyItemPrefab") as GameObject : Resources.Load("UnhealthyItemPrefab") as GameObject;
-            var foodIndex = healthiness < 3 ? UnityEngine.Random.Range(0, healthyItems.Count) : UnityEngine.Random.Range(0, unhealthyItems.Count);
-            var newTexture = healthiness < 3 ? healthyItems[foodIndex] as Texture2D : unhealthyItems[foodIndex] as Texture2D;
+            var healthiness = UnityEngine.Random.Range(0, 100);
+            itemPrefab = healthiness < 50 ? Resources.Load("HealthyItemPrefab") as GameObject : Resources.Load("UnhealthyItemPrefab") as GameObject;
+            var foodIndex = healthiness < 50 ? UnityEngine.Random.Range(0, healthyItems.Count) : UnityEngine.Random.Range(0, unhealthyItems.Count);
+            var newTexture = healthiness < 50 ? healthyItems[foodIndex] as Texture2D : unhealthyItems[foodIndex] as Texture2D;
             var newSprite = Sprite.Create(newTexture, new Rect(0, 0, newTexture.width, newTexture.height), Vector2.zero);
             itemPrefab.GetComponent<SpriteRenderer>().sprite = newSprite as Sprite;
-            if (healthiness == 3)
-            {
-                itemPrefab.GetComponent<Item>().healthy = false;
-            }
 
             Instantiate(itemPrefab);
 

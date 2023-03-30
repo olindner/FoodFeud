@@ -9,6 +9,8 @@ public class Face : MonoBehaviour
     public GameObject healthBar;
     public float currentFood = 25f;
     public float currentHealth = 100f;
+    public float greenDuration = 0.5f;
+    public float multiplier = 8f; // Hack bc idk why the lerping with deltatime doesn't work accurately
     public float maxFood = 100f;
     public float maxHealth = 100f;
 
@@ -43,6 +45,7 @@ public class Face : MonoBehaviour
                 // Eating unhealthy food replenishes hunger, but only at half effectiveness!
                 currentFood = Mathf.Min(currentFood + foodRefillValue/2, maxFood);
                 currentHealth = Mathf.Max(0, currentHealth - unhealthyPenalty);
+                StartCoroutine(TintGreen(gameObject.GetComponent<SpriteRenderer>()));
             }
 
             GameManager.Instance.FoodEaten(col.gameObject, index);
@@ -65,5 +68,32 @@ public class Face : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
 
         particleSystem.Stop();
+    }
+
+    private IEnumerator TintGreen(SpriteRenderer sprite)
+    {
+        Color normal = new Color(1f, 1f, 1f, 1f);
+        Color green = new Color(0f, 1f, 0f, 1f);
+        float elapsedTime = 0;
+        // float duration = greenDuration / 2;
+
+        // Fade to green
+        while (elapsedTime < greenDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            var percentage = elapsedTime / multiplier;
+            sprite.color = Color.Lerp(sprite.color, green, percentage);
+            yield return null;
+        }
+        // Fade back
+        elapsedTime = 0;
+        while (elapsedTime < greenDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            var percentage = elapsedTime / multiplier;
+            sprite.color = Color.Lerp(sprite.color, normal, percentage);
+            yield return null;
+        }
+        yield return null;
     }
 }
