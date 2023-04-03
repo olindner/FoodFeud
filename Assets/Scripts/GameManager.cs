@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Observables
-    public event Action<int> ItemConsumedAction;
+    public event Action<int, int> ItemConsumedAction;
     #endregion
 
     #region Buttons
@@ -108,6 +108,7 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.InitGameObjs:
                 // Get obj references here!
+                SpawnPoint0 = GameObject.Find("SpawnPoint0");
                 CanvasManager.Instance.Initialize();
                 UpdateGameState(GameState.Level1);
                 break;
@@ -168,6 +169,8 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Items
+    private GameObject SpawnPoint0;
+    private int Points;
     private IEnumerator SpawnItems()
     {
         List<UnityEngine.Object> healthyItems = Resources.LoadAll("HealthyPics", typeof(Texture)).ToList();
@@ -186,7 +189,7 @@ public class GameManager : MonoBehaviour
                 var newSprite = Sprite.Create(newTexture, new Rect(0, 0, newTexture.width, newTexture.height), Vector2.zero);
                 itemPrefab.GetComponent<SpriteRenderer>().sprite = newSprite as Sprite;
             }
-            else if (randomSelector < 90)
+            else if (randomSelector >= 45 && randomSelector < 97)
             {
                 itemPrefab = Resources.Load("UnhealthyItemPrefab") as GameObject;
                 var foodIndex = UnityEngine.Random.Range(0, unhealthyItems.Count);
@@ -197,9 +200,12 @@ public class GameManager : MonoBehaviour
             else
             {
                 itemPrefab = Resources.Load("HealthPackItemPrefab") as GameObject;
+                var newTexture = Resources.Load("healthBottleIcon") as Texture2D;
+                var newSprite = Sprite.Create(newTexture, new Rect(0, 0, newTexture.width, newTexture.height), Vector2.zero);
+                itemPrefab.GetComponent<SpriteRenderer>().sprite = newSprite as Sprite;
             }
 
-            Instantiate(itemPrefab);
+            Instantiate(itemPrefab, SpawnPoint0.transform.position, Quaternion.identity);
 
             yield return new WaitForSeconds(2f);
         }
@@ -208,8 +214,8 @@ public class GameManager : MonoBehaviour
 
     public void ItemConsumed(GameObject item, int index)
     {
-        // Eventually add to points based on item's value
-        ItemConsumedAction?.Invoke(index);
+        Points += item.GetComponent<Item>().value;
+        ItemConsumedAction?.Invoke(Points, index);
     }
     #endregion
 }

@@ -7,9 +7,11 @@ public class Plate : MonoBehaviour
     [SerializeField]
     private AnimationCurve curve;
 
+    public float multiplier = 1f;
+
     private GameObject nearbyItem;
     private Vector3 startPos;
-    private Vector3 endPos = new Vector3(0, -1.5f, 0);
+    private Vector3 endPos;
     private float desiredDuration = 1f;
     private float elapsedTime;
     private bool moving;
@@ -17,6 +19,7 @@ public class Plate : MonoBehaviour
     void Start()
     {
         startPos = transform.position;
+        endPos = transform.position + Vector3.up * multiplier;
     }
 
     void Update()

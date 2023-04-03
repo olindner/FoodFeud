@@ -6,9 +6,9 @@ using UnityEngine;
 public class Face : MonoBehaviour
 {
     public int index;
-    public GameObject foodBar;
-    public GameObject healthBar;
-    public float currentFood = 25f;
+    public RectTransform foodGlobe;
+    public RectTransform healthGlobe;
+    public float currentFood = 75f;
     public float currentHealth = 100f;
     public float greenDuration = 0.5f;
     public float multiplier = 8f; // Hack bc idk why the lerping with deltatime doesn't work accurately
@@ -24,8 +24,8 @@ public class Face : MonoBehaviour
 
     void Start()
     {
-        foodBar = GameObject.Find($"FoodBar{index}Insides");
-        healthBar = GameObject.Find($"HealthBar{index}Insides");
+        foodGlobe = GameObject.Find($"FoodGlobe{index}Insides").GetComponent<RectTransform>();
+        healthGlobe = GameObject.Find($"HealthGlobe{index}Insides").GetComponent<RectTransform>();
         particleSystem = GetComponent<ParticleSystem>();
         particleSystem.Stop();
         StartCoroutine(HungerTick());

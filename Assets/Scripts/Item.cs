@@ -5,6 +5,7 @@ using UnityEngine;
 public class Item : MonoBehaviour
 {
     public float speed = 2.5f;
+    public int value;
     public enum Type
     {
         Healthy,
@@ -13,6 +14,24 @@ public class Item : MonoBehaviour
     }
     public Type type;
     public bool moving = true;
+
+    void Start()
+    {
+        switch (type)
+        {
+            case Type.Healthy:
+                value = 50;
+                break;
+            case Type.Unhealthy:
+                value = 10;
+                break;
+            case Type.HealthPack:
+                value = 40;
+                break;
+            default:
+                break;
+        }
+    }
 
     void Update()
     {

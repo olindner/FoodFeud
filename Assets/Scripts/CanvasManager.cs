@@ -6,53 +6,96 @@ using UnityEngine.UI;
 public class CanvasManager : MonoBehaviour
 {
     #region Singleton and Basic Func
-    public static CanvasManager Instance;
+    private static CanvasManager _instance;
+    private static bool applicationIsQuitting = false;
 
-    private GameObject Face0;
-    private GameObject Face1;
-    private GameObject Face2;
-    
-    void Awake()
+    public static CanvasManager Instance
     {
-        Instance = this;
+        get
+        {
+            if (applicationIsQuitting)
+            {
+                return null;
+            }
 
+            if (_instance == null)
+            {
+                GameObject go = new GameObject("CanvasManager");
+                go.AddComponent<CanvasManager>();
+            }
+ 
+            return _instance;
+        }
+    }
+ 
+    private void Awake()
+    {
+        if (_instance) 
+        {
+            Destroy(gameObject);
+        }
+        else 
+        {
+            _instance = this;
+        }
         GameManager.Instance.ItemConsumedAction += ItemConsumed;
-
+        
         DontDestroyOnLoad(this);
     }
 
-    public void Initialize()
-    {
-        Face0 = GameObject.Find("Face0");
-        UpdateBars(0);
-    }
-
-    void OnDestroy()
+    public void OnDestroy()
     {
         if (GameManager.Instance)
         {
             GameManager.Instance.ItemConsumedAction -= ItemConsumed;
         }
+
+        applicationIsQuitting = true;
     }
     #endregion
 
-    private void ItemConsumed(int index)
+    private GameObject Face0;
+    private GameObject Face1;
+    private GameObject Face2;
+    private GameObject PointsTextGameObject;
+    
+    public void Initialize()
     {
-        // Display visual change
+        Face0 = GameObject.Find("Face0");
+        PointsTextGameObject = GameObject.Find("PointsValue");
+        UpdateBars(0);
+    }
+
+    public void InitializeLevel2()
+    {
+        Face1 = GameObject.Find("Face1");
+        UpdateBars(1);
+    }
+
+    public void InitializeLevel3()
+    {
+        Face1 = GameObject.Find("Face2");
+        UpdateBars(2);
+    }
+
+    private void ItemConsumed(int totalPoints, int index)
+    {
+        PointsTextGameObject.GetComponent<Text>().text = totalPoints.ToString();
         UpdateBars(index);
     }
 
     public void UpdateBars(int index)
 	{
         GameObject face = IndexToFace(index);
-        GameObject foodBar = face.GetComponent<Face>().foodBar;
-        GameObject healthBar = face.GetComponent<Face>().healthBar;
+        Face faceComponent = face.GetComponent<Face>();
+        RectTransform foodGlobe = faceComponent.foodGlobe;
+        RectTransform healthGlobe = faceComponent.healthGlobe;
 
-		float foodRatio = face.GetComponent<Face>().currentFood / face.GetComponent<Face>().maxFood;
-		float healthRatio = face.GetComponent<Face>().currentHealth / face.GetComponent<Face>().maxHealth;
+		float foodRatio = faceComponent.currentFood / faceComponent.maxFood;
+		float healthRatio = faceComponent.currentHealth / faceComponent.maxHealth;
 
-		foodBar.GetComponent<RectTransform>().localPosition = new Vector3(foodBar.GetComponent<RectTransform>().rect.width * foodRatio - foodBar.GetComponent<RectTransform>().rect.width, 0, 0);
-		healthBar.GetComponent<RectTransform>().localPosition = new Vector3(healthBar.GetComponent<RectTransform>().rect.width * healthRatio - healthBar.GetComponent<RectTransform>().rect.width, 0, 0);
+		foodGlobe.localPosition = new Vector3(0, foodGlobe.rect.height * foodRatio - foodGlobe.rect.height, 0);
+		healthGlobe.localPosition = new Vector3(0, healthGlobe.rect.height * healthRatio - healthGlobe.rect.height, 0);
 	}
 
     private GameObject IndexToFace(int index)
