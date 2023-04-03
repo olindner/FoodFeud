@@ -58,7 +58,7 @@ public class CanvasManager : MonoBehaviour
     private GameObject Face1;
     private GameObject Face2;
     private GameObject PointsTextGameObject;
-    
+
     public void Initialize()
     {
         Face0 = GameObject.Find("Face0");

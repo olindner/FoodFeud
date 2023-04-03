@@ -164,7 +164,7 @@ public class GameManager : MonoBehaviour
         HoverClip = Resources.Load("Click") as AudioClip;
 
         // Remove this before deploying (hack to develop using game scene)
-        UpdateGameState(GameState.InitGameObjs);
+        // UpdateGameState(GameState.InitGameObjs);
     }
     #endregion
 
